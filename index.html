@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="jquery-1.4.4.min.js"></script>
+    <style type="text/css">
+        .msg{
+            text-decoration: underline;;
+        }
+        .msg span{
+            color: red;
+        }
+    </style>
+</head>
+<body id='body'>
+<p class='msg' id="0">ip:127.0.0.1 say: <span>hello everyone</span></p>
+<form id="f" method="post" action="do.php">
+    <input type="text" name="msg">
+    <input type="button" value="send" onclick="ajaxPost()">
+</form>
+<script>
+    setInterval(ajaxGet,1000);
+
+    function ajaxPost(){
+        $.ajax({
+            url:'do.php',
+            data:$('#f').serializeArray(),
+            type:'post',
+            success:function(res){
+                console.log(res);
+                if(res != 1)
+                    alert('error');
+            },
+            error:function(res){
+                alert('error');
+            }
+        })
+    }
+
+    function ajaxGet(){
+        $.ajax({
+            url:'do.php',
+            type:'get',
+            data:'last='+$('.msg:last').attr('id'),
+            success:function(res){
+                console.log(res);
+                //append
+                res = eval('{'+res+'}');
+                len = res.length;
+                if(len==0)
+                    return;
+                var p = '';
+                for(var i=0;i<len;i++){
+                    p += "<p class='msg' id='"+res[i].id+"'>ip:"+res[i].ip+" say:<span> "+res[i].msg+"</span></p>";
+                }
+                $('.msg:last').append(p);
+
+            },
+            error:function(res){
+                alert('error');
+            }
+        })
+    }
+
+
+</script>
+</body>
+</html>
